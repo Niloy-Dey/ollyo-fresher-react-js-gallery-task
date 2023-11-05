@@ -1,7 +1,6 @@
 import React from 'react';
 
-const Header = ({ totalNumber, deleteImage, isChecked, toggleAllImages }) => {
-    console.log("totalNumber", totalNumber)
+const Header = ({ totalNumber, deleteSelectedImages, isChecked, toggleAllImages })=> {
     return (
         <div>
             <section>
@@ -15,16 +14,21 @@ const Header = ({ totalNumber, deleteImage, isChecked, toggleAllImages }) => {
                                     checked={isChecked}
                                     onChange={toggleAllImages}
                                 />
-                                {totalNumber} File Selected
+                                {totalNumber} Files Selected
                             </label>
                         </div>
 
                         <div>
-                            <button onClick={deleteImage} className='text-red-500 font-bold'>Delete Files</button>
+                            <button onClick={deleteSelectedImages} className='text-red-500 font-bold'>Delete Files</button>
                         </div>
                     </div>
                  : 
-                    <h3 className='text-xl font-bold'>Gallery</h3>
+                 <div className='flex justify-between items-center'>
+                    <div>
+                        <h3 className='text-xl font-bold'>Gallery</h3>
+                    </div>
+                    
+                 </div>
                 }
             </section>
         </div>

@@ -1,10 +1,12 @@
-import React, { useEffect, useState } from 'react';
+import React, { useState } from 'react';
 import Header from './Header';
 import { DndContext, closestCenter } from "@dnd-kit/core";
 import { arrayMove, SortableContext, verticalListSortingStrategy } from "@dnd-kit/sortable";
 import SortableItem from './SortableItem';
 
 const Gallery = () => {
+
+    /* Images from Public folder */
     const [images, setImages] = useState([
         'image-11.jpeg',
         'image-1.webp',
@@ -20,38 +22,51 @@ const Gallery = () => {
         // Add more image URLs as needed
     ]);
 
-    const [selectedImages, setSelectedImages] = useState([]);
-    const [isChecked, setIsChecked] = useState(false);
 
+
+    const [selectedImages, setSelectedImages] = useState([]);
+    const [isAllSelected, setIsAllSelected] = useState(false);
+    
+
+    /* Multiple images selecting functionality */
     const toggleImageSelection = (index) => {
-        console.log('click image')
         const updatedSelection = [...selectedImages];
+
         if (updatedSelection.includes(index)) {
             updatedSelection.splice(updatedSelection.indexOf(index), 1);
         } else {
             updatedSelection.push(index);
         }
         setSelectedImages(updatedSelection);
-        setIsChecked(updatedSelection.length === images.length);
+        setIsAllSelected(updatedSelection.length === images.length);
     };
 
-    const toggleAllImages = () => {
-        if (selectedImages.length < images.length) {
-            setSelectedImages([...Array(images.length).keys()]);
-            setIsChecked(true);
-        } else {
-            setSelectedImages([]);
-            setIsChecked(false);
-        }
-    };
 
+
+/* All images selecting checkbox functionality */
+const toggleAllImages = () => {
+    if (isAllSelected) {
+        setSelectedImages([]);
+        setIsAllSelected(false);
+    } else {
+        setSelectedImages([...Array(images.length).keys()]);
+        setIsAllSelected(true);
+    }
+};
+
+
+
+    /* Images deleting Functionality */
     const deleteSelectedImages = () => {
         const updatedImages = images.filter((_, index) => !selectedImages.includes(index));
         setImages(updatedImages);
         setSelectedImages([]);
-        setIsChecked(false);
+        setIsAllSelected(false);
     };
 
+
+
+    /* Drag and Drop Functionality  */
     const handleDragEnd = (event) => {
         const { active, over } = event;
 
@@ -66,20 +81,23 @@ const Gallery = () => {
 
     const totalNumber = selectedImages.length;
 
-    useEffect(() => {
-        setIsChecked(totalNumber > 0);
-    }, [totalNumber]);
 
     return (
         <div>
             <div className="container mx-auto p-8 rounded bg-white">
+
+                {/* Header Component Here  */}
                 <Header
                     totalNumber={totalNumber}
-                    deleteImage={deleteSelectedImages}
+                    deleteSelectedImages={deleteSelectedImages}
+                    toggleAllImages={toggleAllImages}
+                    isChecked={isAllSelected}
                 />
-                
                 <hr className="flex-grow my-5" />
 
+
+
+                {/* Implementing DND From react DND kit  */}
                 <DndContext
                     collisionDetection={closestCenter}
                     onDragEnd={handleDragEnd}
@@ -93,7 +111,6 @@ const Gallery = () => {
                                 <SortableItem
                                     selectedImages={selectedImages}
                                     toggleImageSelection={toggleImageSelection}
-                                    toggleAllImages={toggleAllImages}
                                     key={image}
                                     id={image}
                                     image={image}
@@ -111,3 +128,8 @@ const Gallery = () => {
 };
 
 export default Gallery;
+
+
+
+
+
